@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-theoremreach" version="1.0.2" 
+    xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>TheoremReachPlugin</name>
+    <description>Cordova plugin for TheoremReach</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,theoremreach</keywords>
+    <repo>https://github.com/theoremreach/IonicSDK.git</repo>
+    <js-module name="TheoremReachPlugin" src="www/TheoremReachPlugin.js">
+        <clobbers target="TheoremReachPlugin" />
+    </js-module>
+    <engines>
+        <engine name="cordova" version=">=3.0.0" />
+        <engine name="cordova-ios" version=">=4.0.0" />
+        <engine name="cordova-android" version=">=5.0.0" />
+    </engines>
+    <platform name="android">
+        <framework src="com.android.support:appcompat-v7:23.4.0" />
+        <framework src="com.google.android.gms:play-services-ads:9.0.1" />
+        <!--framework src="com.theoremreach:theoremreach:3.0.0.7" /-->
+        <framework src="src/android/build-extras-theoremreach.gradle" custom="true" type="gradleReference" />
+        <resource-file src="src/android/theoremreach-3.0.0.7.aar" target="libs/theoremreach-3.0.0.7.aar" />
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="TheoremReachPlugin">
+                <param name="android-package" value="cordova.plugin.theoremreach.TheoremReachPlugin" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        <source-file src="src/android/TheoremReachPlugin.java" target-dir="src/cordova/plugin/theoremreach/" />
+        <info>Cordova Plugin for TheoremReach</info>
+    </platform>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="TheoremReachPlugin">
+                <param name="ios-package" value="TheoremReachPlugin" />
+            </feature>
+        </config-file>
+        <config-file parent="NSAppTransportSecurity" target="*-Info.plist">
+            <array>
+                <dict>
+                    <key>NSAllowsArbitraryLoads</key>
+                    <Boolean>YES</Boolean>
+                </dict>
+            </array>
+        </config-file>
+        <framework src="WebKit.framework" />
+        <framework src="UIKit.framework" />
+        <framework src="SystemConfiguration.framework" />
+        <framework src="Security.framework" />
+        <framework src="JavaScriptCore.framework" />
+        <framework src="Foundation.framework" />
+        <framework src="CoreTelephony.framework" />
+        <framework src="AdSupport.framework" />
+		<framework src="src/ios/TheoremReachSDK.framework" custom="true" />
+        <source-file src="src/ios/TheoremReachPlugin.m" />
+        <info>Cordova Plugin for TheoremReach</info>
+    </platform>
+</plugin>
