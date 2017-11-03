@@ -24,8 +24,6 @@ NSString *theoremreachSurveyAvailableCallback;
 
 @implementation TheoremReachPlugin
 
-BOOL isCenterOpened = NO;
-
 - (void)initWithApiKeyAndUserId:(CDVInvokedUrlCommand*)command
 {
     NSString* apiKey = [command.arguments objectAtIndex:0];
@@ -41,9 +39,9 @@ BOOL isCenterOpened = NO;
 
 - (void)enableDebugMode:(CDVInvokedUrlCommand*)command
 {
-    BOOL mode = [command.arguments objectAtIndex:0];
+    BOOL debugMode = [command.arguments objectAtIndex:0];
 
-    [[TheoremReach getInstance] enableDebugMode:mode];
+    [[TheoremReach getInstance] enableDebugMode:debugMode];
 }
 
 - (void)isSurveyAvailable:(CDVInvokedUrlCommand*)command
@@ -51,9 +49,6 @@ BOOL isCenterOpened = NO;
     [self.commandDelegate runInBackground:^{
         CDVPluginResult* pluginResult = nil;
         BOOL result = [TheoremReach getInstance].isSurveyAvailable;
-        if (isCenterOpened) {
-            result = NO;
-        }
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:result];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
@@ -61,10 +56,8 @@ BOOL isCenterOpened = NO;
 
 - (void)showRewardCenter:(CDVInvokedUrlCommand*)command
 {
-    if (!isCenterOpened) {
-        NSLog(@"TheoremReachPlugin RewardCenter Opening");
-        [TheoremReach showRewardCenter];
-    }
+    NSLog(@"TheoremReachPlugin RewardCenter Opening");
+    [TheoremReach showRewardCenter];
 }
 
 - (void)setRewardCallback:(CDVInvokedUrlCommand*)command
@@ -96,7 +89,6 @@ BOOL isCenterOpened = NO;
 }
 
 - (void)onRewardCenterOpened {
-    isCenterOpened = YES;
     // reward center opened! Time to take surveys!
     NSLog(@"TheoremReachPlugin onRewardCenterOpened");
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -105,7 +97,6 @@ BOOL isCenterOpened = NO;
 }
 
 - (void)onRewardCenterClosed {
-    isCenterOpened = NO;
     // reward center opened! Back to the app to use our coins!
     NSLog(@"TheoremReachPlugin onRewardCenterClosed");
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
