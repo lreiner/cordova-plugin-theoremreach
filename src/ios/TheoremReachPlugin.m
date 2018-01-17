@@ -6,22 +6,23 @@
 NSString *onRewardCallback;
 NSString *onRewardCenterOpenedCallback;
 NSString *onRewardCenterClosedCallback;
+NSString *theoremreachSurveyAvailableCallback;
 
 @interface TheoremReachPlugin : CDVPlugin <TheoremReachRewardDelegate, TheoremReachSurveyDelegate> {
   // Member variables go here.
 }
 
 - (void)initWithApiKeyAndUserId:(CDVInvokedUrlCommand*)command;
+- (void)enableDebugMode:(CDVInvokedUrlCommand*)command;
 - (void)isSurveyAvailable:(CDVInvokedUrlCommand*)command;
 - (void)showRewardCenter:(CDVInvokedUrlCommand*)command;
 - (void)setRewardCallback:(CDVInvokedUrlCommand*)command;
 - (void)setRewardCenterOpenedCallback:(CDVInvokedUrlCommand*)command;
 - (void)setRewardCenterClosedCallback:(CDVInvokedUrlCommand*)command;
+- (void)setTheoremreachSurveyAvailableCallback:(CDVInvokedUrlCommand*)command;
 @end
 
 @implementation TheoremReachPlugin
-
-BOOL isCenterOpened = NO;
 
 - (void)initWithApiKeyAndUserId:(CDVInvokedUrlCommand*)command
 {
@@ -36,14 +37,18 @@ BOOL isCenterOpened = NO;
     }];
 }
 
+- (void)enableDebugMode:(CDVInvokedUrlCommand*)command
+{
+    BOOL debugMode = [command.arguments objectAtIndex:0];
+
+    [[TheoremReach getInstance] enableDebugMode:debugMode];
+}
+
 - (void)isSurveyAvailable:(CDVInvokedUrlCommand*)command
 {
     [self.commandDelegate runInBackground:^{
         CDVPluginResult* pluginResult = nil;
         BOOL result = [TheoremReach getInstance].isSurveyAvailable;
-        if (isCenterOpened) {
-            result = NO;
-        }
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:result];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     }];
@@ -51,10 +56,8 @@ BOOL isCenterOpened = NO;
 
 - (void)showRewardCenter:(CDVInvokedUrlCommand*)command
 {
-    if (!isCenterOpened) {
-        NSLog(@"TheoremReachPlugin RewardCenter Opening");
-        [TheoremReach showRewardCenter];
-    }
+    NSLog(@"TheoremReachPlugin RewardCenter Opening");
+    [TheoremReach showRewardCenter];
 }
 
 - (void)setRewardCallback:(CDVInvokedUrlCommand*)command
@@ -72,6 +75,11 @@ BOOL isCenterOpened = NO;
     onRewardCenterClosedCallback = command.callbackId;
 }
 
+- (void)setTheoremreachSurveyAvailableCallback:(CDVInvokedUrlCommand*)command
+{
+    theoremreachSurveyAvailableCallback = command.callbackId;
+}
+
 - (void)onReward: (NSNumber* )quantity {
     // award user the content!
     NSLog(@"TheoremReachPlugin onReward: %@", quantity);
@@ -81,7 +89,6 @@ BOOL isCenterOpened = NO;
 }
 
 - (void)onRewardCenterOpened {
-    isCenterOpened = YES;
     // reward center opened! Time to take surveys!
     NSLog(@"TheoremReachPlugin onRewardCenterOpened");
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -90,12 +97,19 @@ BOOL isCenterOpened = NO;
 }
 
 - (void)onRewardCenterClosed {
-    isCenterOpened = NO;
     // reward center opened! Back to the app to use our coins!
     NSLog(@"TheoremReachPlugin onRewardCenterClosed");
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     pluginResult.keepCallback = @1;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:onRewardCenterClosedCallback];
+}
+
+-(void)theoremreachSurveyAvailable: (BOOL) surveyAvailable {
+    // TheoremReachSurvayAvailable
+    NSLog(@"TheoremReachSurvayAvailable: %d", surveyAvailable);
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:surveyAvailable];
+    pluginResult.keepCallback = @1;
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:theoremreachSurveyAvailableCallback];
 }
 
 @end

@@ -1,5 +1,4 @@
 android {    
-    compileSdkVersion 23
     defaultConfig {
         minSdkVersion 15
     }
