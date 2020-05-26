@@ -20,7 +20,7 @@
         <framework src="com.google.android.gms:play-services-ads:10.2.1" />
         <!--framework src="com.theoremreach:theoremreach:3.1.5" /-->
         <framework src="src/android/build-extras-theoremreach.gradle" custom="true" type="gradleReference" />
-        <resource-file src="src/android/theoremreach-3.1.7.aar" target="libs/theoremreach-3.1.5.aar" />
+        <resource-file src="src/android/theoremreach-3.1.7.aar" target="libs/theoremreach-3.1.7.aar" />
         <config-file parent="/*" target="res/xml/config.xml">
             <feature name="TheoremReachPlugin">
                 <param name="android-package" value="cordova.plugin.theoremreach.TheoremReachPlugin" />
